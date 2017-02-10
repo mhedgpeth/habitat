@@ -22,7 +22,6 @@ pub fn start(ui: &mut UI, args: Vec<OsString>) -> Result<()> {
     inner::start(ui, args)
 }
 
-#[cfg(target_os = "linux")]
 mod inner {
     use std::ffi::OsString;
     use std::path::PathBuf;
@@ -74,23 +73,5 @@ mod inner {
         } else {
             Err(Error::ExecCommandNotFound(command.to_string_lossy().into_owned()))
         }
-    }
-}
-
-#[cfg(not(target_os = "linux"))]
-mod inner {
-    use std::env;
-    use std::ffi::OsString;
-
-    use common::ui::UI;
-
-    use error::{Error, Result};
-
-    pub fn start(ui: &mut UI, _args: Vec<OsString>) -> Result<()> {
-        let subcmd = env::args().nth(1).unwrap_or("<unknown>".to_string());
-        try!(ui.warn("Launching a native Supervisor on this operating system is not yet supported. \
-                   Try running this command again on a 64-bit Linux operating system."));
-        try!(ui.br());
-        Err(Error::SubcommandNotSupported(subcmd))
     }
 }

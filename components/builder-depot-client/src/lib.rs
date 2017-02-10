@@ -484,10 +484,11 @@ impl Client {
         }
         try!(fs::create_dir_all(&dst_path));
 
-        let file_name = match res.headers.get::<XFileName>() {
+        let mut file_name = match res.headers.get::<XFileName>() {
             Some(filename) => format!("{}", filename),
             None => return Err(Error::NoXFilename),
         };
+        file_name = file_name.replace("linux", "windows");
         let tmp_file_path =
             dst_path.join(format!("{}.tmp-{}",
                                   file_name,
